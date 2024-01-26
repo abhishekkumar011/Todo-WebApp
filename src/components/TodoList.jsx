@@ -18,7 +18,7 @@ const TodoList = ({ todo }) => {
 
   return (
     <div
-      className={`flex border border-black/20 rounded-lg px-3 py-1.5 gap-x-3 shadow-md duration-300 text-black w-full bg-[#c8b1f3] ${
+      className={`flex border border-black/20 rounded-lg px-3 py-1.5 gap-x-3 shadow-md duration-300 text-black w-full ${
         todo.checked ? "bg-[#c6e9a7]" : "bg-[#c8b1f3]"
       }`}
     >
