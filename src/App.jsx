@@ -1,8 +1,51 @@
+import { useState } from "react";
 import { TodoInput, TodoList } from "./components";
+import { TodoProvider } from "./context";
+import { useEffect } from "react";
 
 function App() {
+  const [todos, setTodos] = useState([]);
+
+  const addTodo = (todo) => {
+    setTodos((prev) => [{ ...todo }, ...prev]);
+  };
+
+  const updateTodo = (id, todo) => {
+    setTodos((prev) =>
+      prev.map((prevTodo) => (prevTodo.id === id ? todo : prevTodo))
+    );
+  };
+
+  const deleteTodo = (id) => {
+    setTodos((prev) => prev.filter((prevTodo) => prevTodo.id !== id));
+  };
+
+  const toggleComplete = (id) => {
+    setTodos((prev) =>
+      prev.map((prevTodo) =>
+        prevTodo.id === id
+          ? { ...prevTodo, checked: !prevTodo.checked }
+          : prevTodo
+      )
+    );
+  };
+
+  useEffect(() => {
+    const todos = JSON.parse(localStorage.getItem("todos"));
+
+    if (todos && todos.length > 0) {
+      setTodos(todos);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
   return (
-    <>
+    <TodoProvider
+      value={{ todos, addTodo, updateTodo, deleteTodo, toggleComplete }}
+    >
       <div className="bg-[#7c44e4] min-h-screen py-8">
         <div className="w-full max-w-2xl mx-auto shadow-lg rounded-lg px-4 py-3 bg-[#FBF9F1] text-gray-800 font-mono">
           <h1 className="text-2xl font-extrabold text-center mb-8 mt-2">
@@ -12,11 +55,15 @@ function App() {
             <TodoInput />
           </div>
           <div className="flex flex-wrap gap-y-3">
-            <TodoList />
+            {todos.map((todo) => (
+              <div key={todo.id} className="w-full">
+                <TodoList todo={todo} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </>
+    </TodoProvider>
   );
 }
 
